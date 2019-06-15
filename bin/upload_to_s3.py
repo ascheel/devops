@@ -47,14 +47,19 @@ def main():
     Our main routine
     """
     bucket_name = "ascheel-upload"
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
+    if len(sys.argv) < 2 or len(sys.argv) > 4:
         print("Usage: {} <filename> [bucket_name]")
         sys.exit(1)
     
     filename = sys.argv[1]
 
-    if len(sys.argv) == 3:
+    if len(sys.argv) >= 3:
         bucket_name = sys.argv[2]
+    
+    no_rename = False
+    if len(sys.argv) == 4:
+        if sys.argv[3] == "-n":
+            no_rename = True
     
     if not os.path.exists(filename):
         print("Input filename does not exist.")
@@ -65,7 +70,8 @@ def main():
         sys.exit(3)
 
     target_filename = get_target_filename(filename, bucket_name)
-    # target_filename = os.path.split(filename)[-1]
+    if no_rename:
+        target_filename = os.path.split(filename)[-1]
 
     bucket = s3.Bucket(bucket_name)
     with open(filename, "rb") as f:

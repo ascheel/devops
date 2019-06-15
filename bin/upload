@@ -4,4 +4,4 @@
 
 cd /home/arts/adobe/bin/lambda
 zip lambda.zip s3trigger.py
-python3 /home/arts/adobe/bin/upload_to_s3.py lambda.zip ascheel-lambda
+python3 /home/arts/adobe/bin/upload_to_s3.py lambda.zip ascheel-lambda -n
