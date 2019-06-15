@@ -2,6 +2,10 @@
 
 ## Adobe DevOps Exercise
 
+Out of brevity, the IAM policy used was that of a System Administrator.  These are not locked down and would be in a real-world environment.
+
+As opposed to having the source code inline with the CloudFormation template, I have instead opted to create the Lambda Function beforehand in an S3Bucket that's also freshly created.  I could have scripted it to build the first S3 Bucket, upload the lambda function, and then run a second CloudFormation template, but opted for this way, instead.
+
 ### File List
 
 | Filename                                             | Notes                                                             |
@@ -24,3 +28,20 @@
 | `data/lorem.txt`                                     | Sample data file 2                                                |
 | `supplied/DevOps-Engineer-EA-Applicant-Exercise.pdf` | The provided instruction file                                     |
 | `supplied/data.sql`                                  | Sample data file 1                                                |
+
+### Cost Details
+
+| Product     | Cost details                                 | Per data sample      |
+|-------------|----------------------------------------------|----------------------|
+| S3          | $ 0.023 per GB for first 50 TB per Month     | $ 0.0000000000026186 |
+| Lambda      | First 1M requests free, then $0.20 per 1M.   | $ 0.00               |
+| SNS         | $2.00 per 100,000 emails.                    | $ 0.00001            |
+| SQS         | Standard Queue: $0.40 per 1M requests.       | $ 0.00000040         |
+| DynamoDB    | $1.25 per 1M writes, $0.25 per million reads | $ 0.0000015          |
+| VPC         | None                                         | $ 0.0                |
+| NAT Gateway | $ 0.045 per hour, $ 0.045 per GB             | $19.44/Month         |
+| API Gateway | $3.50 for first 333M, $2.80 for next 667M    | $ (a teeny number)   |
+
+
+
+
