@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Zips up our Lambda trigger code and uploads it to the right bucket
+
+cd /home/arts/adobe/bin/lambda
+zip lambda.zip s3trigger.py
+python3 upload_to_s3.py lambda.zip ascheel-lambda

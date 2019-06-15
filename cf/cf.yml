@@ -1,0 +1,183 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Adobe DevOps Engineering Exercise
+Parameters:
+  S3BucketName:
+    # Bucket naming requirements:  https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-s3-bucket-naming-requirements.html
+    Type: String
+    Default: ascheel-upload
+  S3BucketLambdaName:
+    Type: String
+    Default: ascheel-lambda
+  LambdaFunctionName:
+    Type: String
+    Default: S3Trigger
+  DynamoTableName:
+    Type: String
+    Default: Files
+Resources:
+  # All resources:
+  # S3 bucket                           - Done
+  # Lambda                              - Done
+  # SNS Topic                           - Done
+  # SQS                                 - Done
+  # DynamoDB                            - Done
+  # VPC with subnets                    - Done
+  # NAT Gateway                         - Done
+  # API Stage with key and usage plan   - Incomplete
+  S3Bucket1:
+    # Encrypted with AES256 Server-side encryption - Done
+    # Lifecycle policy of 1 day - Done
+    Type: AWS::S3::Bucket
+    DependsOn: LambdaFunction1
+    Properties:
+      BucketName: !Ref S3BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: Expiry
+            ExpirationInDays: '1'
+            Status: Enabled
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt LambdaFunction1.Arn
+  SNSTopic1:
+    # Topic should include bucket, key of file, number of
+    # lines in the uploaded file, and the epoch timestamp
+    # the file was uploaded
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: AdobeDevopsExerciseTopic
+      Subscription:
+        - Endpoint: ascheel@gmail.com
+          Protocol: email
+  Queue1:
+    # Here, but unused
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: AdobeExerciseQueue
+      # FifoQueue: false
+      DelaySeconds: 0
+  DynamoTable1:
+    # SSE Must be enabled - Done
+    # TTL set for 1 days - Handled in Lambda script
+    # Table read/write auto scaling - Done-ish
+    #    Read/Write auto-scaling are only reduced if it's not PAY_PER_REQUEST
+    # key = filename - Done
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      TableName: !Ref DynamoTableName
+      AttributeDefinitions:
+        - AttributeName: Filename
+          AttributeType: S
+      SSESpecification:
+        SSEEnabled: true
+      KeySchema:
+        - AttributeName: Filename
+          KeyType: HASH
+      TimeToLiveSpecification:
+        # With this Attribute name, create this as an attribute
+        #   in the DynamoDB Item and set the value there.
+        AttributeName: TimeToLive
+        Enabled: True
+  VPC1:
+    # VPC Created with both private and public subnets
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    DependsOn: VPC1
+    Properties:
+      VpcId:
+        Ref: VPC1
+      CidrBlock: 10.0.0.0/24
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    DependsOn: VPC1
+    Properties:
+      VpcId: !Ref VPC1
+      CidrBlock: 10.0.1.0/24
+  NATGateway1:
+    Type: AWS::EC2::NatGateway
+    DependsOn: EIP1
+    Properties:
+      AllocationId: !GetAtt EIP1.AllocationId
+      SubnetId: !Ref PublicSubnet1
+  EIP1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+    DependsOn: InternetGatewayAttachment1
+  PublicRouteTable1:
+    Type: AWS::EC2::RouteTable
+    DependsOn: InternetGatewayAttachment1
+    Properties:
+      VpcId: !Ref VPC1
+  Route1:
+    Type: AWS::EC2::Route
+    DependsOn: PublicRouteTable1
+    Properties:
+      RouteTableId: !Ref PublicRouteTable1
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGateway1
+  InternetGateway1:
+    Type: AWS::EC2::InternetGateway
+  InternetGatewayAttachment1:
+    Type: AWS::EC2::VPCGatewayAttachment
+    DependsOn: VPC1
+    Properties:
+      InternetGatewayId: !Ref InternetGateway1
+      VpcId: !Ref VPC1
+  LambdaFunction1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Handler: s3trigger.lambda_function
+      Runtime: python3.6
+      Code:
+        S3Bucket: !Ref S3BucketLambdaName
+        S3Key: lambda.zip
+      Role: !GetAtt LambdaExecutionRole1.Arn
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt LambdaFunction1.Arn
+      Principal: s3.amazonaws.com
+  LambdaExecutionRole1:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action: s3:*
+                Resource: arn:aws:s3:::*
+              - Effect: Allow
+                Action: sns:*
+                Resource: arn:aws:sns:*
+              - Effect: Allow
+                Action: dynamodb:*
+                Resource: arn:aws:dynamodb:*
