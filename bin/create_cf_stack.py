@@ -46,16 +46,16 @@ stack_status_values = (
 
 
 def print(*args, **kwargs):
-	"""Custom print"""
-	if 'color' in kwargs:
-		_color = kwargs['color']
-		del kwargs['color']
-		if is_color_term() and _color:
-			new_args = []
-			for arg in args:
-				new_args.append('{}{}{}'.format(color(_color), args[0], color('default')))
-			args = tuple(new_args)
-	return builtins.print(*args, **kwargs)
+    """Custom print"""
+    if 'color' in kwargs:
+        _color = kwargs['color']
+        del kwargs['color']
+        if is_color_term() and _color:
+            new_args = []
+            for arg in args:
+                new_args.append('{}{}{}'.format(color(_color), args[0], color('default')))
+            args = tuple(new_args)
+    return builtins.print(*args, **kwargs)
 
 
 def color(c):
@@ -64,62 +64,62 @@ def color(c):
     :param c: string color name
     :returns: string ANSI color code
     """
-	c = c.lower()
-	ansi = {
-		'black': '\033[0;30m',
-		'darkred': '\033[0;31m',
-		'darkgreen': '\033[0;32m',
-		'darkyellow': '\033[0;33m',
-		'darkblue': '\033[0;34m',
-		'darkmagenta': '\033[0;35m',
-		'darkcyan': '\033[0;36m',
-		'gray': '\033[0;37m',
+    c = c.lower()
+    ansi = {
+        'black': '\033[0;30m',
+        'darkred': '\033[0;31m',
+        'darkgreen': '\033[0;32m',
+        'darkyellow': '\033[0;33m',
+        'darkblue': '\033[0;34m',
+        'darkmagenta': '\033[0;35m',
+        'darkcyan': '\033[0;36m',
+        'gray': '\033[0;37m',
 
-		'darkgray': '\033[1;30m',
-		'red': '\033[1;31m',
-		'green': '\033[1;32m',
-		'yellow': '\033[1;33m',
-		'blue': '\033[1;34m',
-		'magenta': '\033[1;35m',
-		'cyan': '\033[1;36m',
-		'white': '\033[1;37m',
+        'darkgray': '\033[1;30m',
+        'red': '\033[1;31m',
+        'green': '\033[1;32m',
+        'yellow': '\033[1;33m',
+        'blue': '\033[1;34m',
+        'magenta': '\033[1;35m',
+        'cyan': '\033[1;36m',
+        'white': '\033[1;37m',
 
-		'blackbg': '\033[40m',
-		'redbg': '\033[41m',
-		'greenbg': '\033[42m',
-		'yellowbg': '\033[43m',
-		'bluebg': '\033[44m',
-		'magentabg': '\033[45m',
-		'cyanbg': '\033[46m',
-		'whitebg': '\033[47m',
+        'blackbg': '\033[40m',
+        'redbg': '\033[41m',
+        'greenbg': '\033[42m',
+        'yellowbg': '\033[43m',
+        'bluebg': '\033[44m',
+        'magentabg': '\033[45m',
+        'cyanbg': '\033[46m',
+        'whitebg': '\033[47m',
 
-		'reset': '\033[0;0m',
-		'bold': '\033[1m',
-		'reverse': '\033[2m',
-		'underline': '\033[4m',
+        'reset': '\033[0;0m',
+        'bold': '\033[1m',
+        'reverse': '\033[2m',
+        'underline': '\033[4m',
 
-		'clear': '\033[2J',
-	#   'clearline': '\033[K',
-		'clearline': '\033[2K',
-	#   'save': '\033[s',
-	#   'restore': '\033[u',
-		'save': '\0337',
-		'restore': '\0338',
-		'linewrap': '\033[7h',
-		'nolinewrap': '\033[7l',
+        'clear': '\033[2J',
+    #   'clearline': '\033[K',
+        'clearline': '\033[2K',
+    #   'save': '\033[s',
+    #   'restore': '\033[u',
+        'save': '\0337',
+        'restore': '\0338',
+        'linewrap': '\033[7h',
+        'nolinewrap': '\033[7l',
 
-		'up': '\033[1A',
-		'down': '\033[1B',
-		'right': '\033[1C',
-		'left': '\033[1D',
+        'up': '\033[1A',
+        'down': '\033[1B',
+        'right': '\033[1C',
+        'left': '\033[1D',
 
-		'default': '\033[0;0m',
-	}
-	if c.lower() == 'list':
-		return ansi
-	if c not in ansi:
-		return ansi["default"]
-	return ansi[c]
+        'default': '\033[0;0m',
+    }
+    if c.lower() == 'list':
+        return ansi
+    if c not in ansi:
+        return ansi["default"]
+    return ansi[c]
 
 
 def is_color_term():
@@ -127,14 +127,14 @@ def is_color_term():
     Checks if currnet TERM environment variable is allows color
     :returns: boolean True if color-allowed, otherwise False
     """
-	terms = ('xterm', 'vt100', 'screen')
-	TERM = os.environ.get('TERM', None)
-	if not TERM:
-		return False
-	for term in terms:
-		if TERM.startswith(term):
-			return True
-	return False
+    terms = ('xterm', 'vt100', 'screen')
+    TERM = os.environ.get('TERM', None)
+    if not TERM:
+        return False
+    for term in terms:
+        if TERM.startswith(term):
+            return True
+    return False
 
 
 class CloudFormation(object):
