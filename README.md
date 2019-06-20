@@ -39,17 +39,4 @@ Before you get started, review the dependencies.
 
 ### Cost Details
 
-| Product     | Cost details                                 | Per data sample      |
-|-------------|----------------------------------------------|----------------------|
-| S3          | $ 0.023 per GB for first 50 TB per Month     | $ 0.0000000000026186 |
-| Lambda      | First 1M requests free, then $0.20 per 1M.   | $ 0.00               |
-| SNS         | $2.00 per 100,000 emails.                    | $ 0.00001            |
-| SQS         | Standard Queue: $0.40 per 1M requests.       | $ 0.00000040         |
-| DynamoDB    | $1.25 per 1M writes, $0.25 per million reads | $ 0.0000015          |
-| VPC         | None                                         | $ 0.0                |
-| NAT Gateway | $ 0.045 per hour, $ 0.045 per GB             | $19.44/Month         |
-| API Gateway | $3.50 for first 333M, $2.80 for next 667M    | $ (a teeny number)   |
-
-
-
-
+Cost calculations have been recorded in a Google Sheets file:  https://docs.google.com/spreadsheets/d/1zUh-UcVAlMzrEUit3MRz-RyV83yXY1Ysk_HhCrwJOQQ/edit#gid=1913793038
