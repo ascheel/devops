@@ -9,7 +9,7 @@ fi
 stack_name="$1"
 
 # Set our home dir
-build_dir="/home/arts/adobe"
+build_dir="$HOME/adobe"
 
 if [[ ! -d "$build_dir" ]]; then
     echo "Directory $build_dir does not exist or is not a directory."
