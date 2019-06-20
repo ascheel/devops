@@ -7,11 +7,11 @@ Out of brevity, the IAM policy used was that of a System Administrator.  These a
 As opposed to having the source code inline with the CloudFormation template, I have instead opted to create the Lambda Function beforehand in an S3Bucket that's also freshly created.  I could have scripted it to build the first S3 Bucket, upload the lambda function, and then run a second CloudFormation template, but opted for this way, instead.
 
 ### Dependencies
-Before you get started, review the dependencies.
-`python3`
-`python3-distutils` python3 distribution utilities.  Required for `pip`/`pip3`.
-`pip3` python3 package installer.  Required for `boto3`.
-`boto3` python3 package.  Amazon's official AWS Python SDK.
+Before you get started, review the dependencies.  
+`python3`  
+`python3-distutils` python3 distribution utilities.  Required for `pip`/`pip3`.  
+`pip3` python3 package installer.  Required for `boto3`.  
+`boto3` python3 package.  Amazon's official AWS Python SDK.  
 `awscli` python3 package.  Amazon's official command line API interface.  Can be installed via `pip3`, `apt`, or `yum`.
 
 ### File List
